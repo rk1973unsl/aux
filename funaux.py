@@ -260,10 +260,6 @@ def xpulsos(fs, periodo, ciclo, tmax=1, polaridad='b'):
   if polaridad=='u':
     xx=normalizar(xx)
 # version 0.1.2 9/6/2023
-
-
-from __future__ import print_function
-print("importando modulos de ploteo, audio e interaccion")
    
 import numpy as np
 import matplotlib.pyplot as plt
