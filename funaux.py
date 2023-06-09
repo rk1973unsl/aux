@@ -1,7 +1,4 @@
-# version 0.1.1 15/9/2022
-
-
-from __future__ import print_function
+# version 0.1.2 9/6/2023
 print("importando modulos de ploteo, audio e interaccion")
    
 import numpy as np
