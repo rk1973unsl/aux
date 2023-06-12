@@ -669,6 +669,27 @@ def obtener_espectro_ofdm(s_ofdm, num_portadoras, cp_length):
     
     return bits
 
+def canal_inalambrico(senal, fs, snr_dB, delay_spread):
+    # Generar desvanecimiento multicamino
+    h = np.sqrt(0.5) * (np.random.randn() + 1j * np.random.randn()) * np.exp(-1j * 2 * np.pi * np.random.rand())
+    
+    # Ajustar retardo en función de la frecuencia de muestreo
+    delay_spread_samples = int(delay_spread * fs)
+    
+    # Aplicar desvanecimiento multicamino a la señal
+    senal_desvanecida = np.convolve(senal, h)
+    senal_desvanecida = senal_desvanecida[:len(senal)]  # Ajustar longitud de la señal desvanecida
+    
+    # Generar ruido gaussiano
+    snr = 10 ** (snr_dB / 10)  # Conversión de dB a escala lineal
+    var_ruido = np.var(senal_desvanecida) / snr
+    ruido = np.sqrt(var_ruido / 2) * (np.random.randn(len(senal_desvanecida)) + 1j * np.random.randn(len(senal_desvanecida)))
+    
+    # Agregar ruido a la señal desvanecida
+    senal_con_ruido = senal_desvanecida + ruido
+    
+    return senal_con_ruido
+
   
 print("listo!")
 
