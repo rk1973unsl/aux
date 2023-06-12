@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from IPython.display import Audio
 from scipy.io import wavfile
+import scipy.fftpack as fft
 from ipywidgets import interact, interactive, fixed, interact_manual
 import ipywidgets as widgets
 
@@ -431,30 +432,6 @@ def graff2lp(x,fs,xlim):
       plt.xlim(xlim) 
     return X
 
-def espectro(x,fs,xlim):
-    '''
-       grafica en el dominio de la frecuencia, espectro de dos lados de potencias en escala logaritmica
-       primer argumento, arreglo de valores de la funcion en el tiempo
-       segundo argumento, frecuencia de muestreo
-       tercer argumento, limites de frecuencias a graficar [finf, fsup]
-       entrega componentes en frecuencia (nros. complejos)
-    '''
-    N = len(x)
-    X = np.fft.fft(x)/N
-    X_pl = np.log(np.abs(X)**2)
-    # plotear frecuencias positivas
-    freqsp = np.arange(0, fs / 2, step=fs / N)
-    plt.plot(freqsp, X_pl[:(N // 2)])
-    # plotear frecuencias negativas
-    freqsn = np.arange(-fs / 2, 0, step=fs / N)
-    plt.plot(freqsn, X_pl[(N // 2):])
-    # etiquetar eje x
-    plt.xlabel("Frequencia (Hz)")
-    plt.ylabel("Amplitud (log)")
-    if len(xlim) >= 2:
-      plt.xlim(xlim) 
-    return X
-
 def pasabanda(X,fs,finf,fsup):
   '''
     Filtro pasa banda ideal de las componentes en frecuencia X
@@ -644,6 +621,54 @@ def graf_espectrograma_3d(x, fs, window_size, overlap, azim=45, elev=45):
     ax.set_title('Espectrograma 3D')
     ax.view_init(azim, elev)
     plt.show()
+      
+
+
+
+def generar_ofdm(bits, num_portadoras, cp_length):
+    # Parámetros de la señal OFDM
+    num_bits = len(bits)
+    num_subportadoras = num_portadoras - 1
+    total_simbolos = num_bits // num_subportadoras
+    
+    # Conversión de bits a símbolos
+    bits_por_simbolo = num_subportadoras
+    bits_padded = np.append(bits, np.zeros(num_subportadoras - (num_bits % num_subportadoras)))
+    simbolos = np.reshape(bits_padded, (total_simbolos, bits_por_simbolo))
+    
+    # Asignación de portadoras a los símbolos
+    portadoras = np.zeros((total_simbolos, num_portadoras), dtype=complex)
+    portadoras[:, 1:num_portadoras] = simbolos
+    
+    # Transformada de Fourier inversa (IFFT) para cada símbolo
+    simbolos_ifft = np.fft.ifft(portadoras, axis=1)
+    
+    # Cíclico prefijo (CP)
+    simbolos_cp = np.concatenate((simbolos_ifft[:, -cp_length:], simbolos_ifft), axis=1)
+    
+    # Concatenación de los símbolos con CP
+    s_ofdm = np.reshape(simbolos_cp, (-1,))
+    return s_ofdm
+
+def obtener_espectro_ofdm(s_ofdm, num_portadoras, cp_length):
+    # Reorganización de la señal en bloques de símbolos con CP
+    simbolos_cp = np.reshape(s_ofdm, (-1, num_portadoras + cp_length))
+    
+    # Remoción del prefijo cíclico (CP)
+    simbolos = simbolos_cp[:, cp_length:]
+    
+    # Transformada de Fourier (FFT) para cada símbolo
+    simbolos_fft = np.fft.fft(simbolos, axis=1)
+    
+    # Eliminación de la portadora nula y las portadoras negativas
+    espectro = simbolos_fft[:, 1:(num_portadoras // 2)]
+    
+    # Conversión de los símbolos FFT a bits
+    bits = np.round(np.real(espectro)).flatten()
+    bits = bits.astype(int)
+    
+    return bits
+
   
 print("listo!")
 
