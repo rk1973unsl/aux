@@ -402,7 +402,7 @@ def graf_espectrograma_pcolor(x, fs, window_size, overlap):
       
     # Grafica el espectrograma en vista superior utilizando pcolor
     plt.figure(figsize=(10, 6))
-    plt.pcolor(times, freqs, np.abs(spectrogram), cmap='jet')
+    plt.pcolor(times, freqs, np.abs(espectrograma), cmap='jet')
     plt.colorbar(label='Magnitud')
     plt.xlabel('Tiempo (s)')
     plt.ylabel('Frecuencia (Hz)')
