@@ -352,7 +352,7 @@ def graf_espectrograma(x, fs, window_size, overlap):
     plt.show()
     return np.abs(espectrograma), freqs, times
 
-def graf_espectrograma_3d(x, fs, window_size, overlap, azim=45, elev=45):
+def graf_espectrograma_3d(x, fs, window_size, overlap, azim=45, elev=-45):
     '''
     Grafica un espectrograma 3D de un vector de muestras de tiempo.
 
