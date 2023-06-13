@@ -328,29 +328,6 @@ def calc_espectrograma(x, fs, window_size, overlap):
     freqs = np.fft.fftfreq(window_size, 1 / fs)
     times = np.arange(num_windows) * hop_size / fs
     return np.abs(espectrograma), freqs, times
-   
-def graf_espectrograma(x, fs, window_size, overlap):
-    '''
-    Grafica el espectrograma de un vector de muestras de tiempo.
-
-    Argumentos:
-    x: Array de muestras de tiempo.
-    fs: Frecuencia de muestreo.
-    window_size: Tamaño de la ventana de análisis (en muestras).
-    overlap: Superposición entre ventanas consecutivas (como fracción, por ejemplo, 0.5 para una superposición del 50%).
-    '''
-    # Crea el espectrograma
-    espectrograma, freqs, times = calc_espectrograma(x, fs, window_size, overlap)
-
-    # Grafica el espectrograma
-    plt.figure(figsize=(10, 6))
-    plt.imshow(np.abs(espectrograma), aspect='auto', origin='lower', cmap='jet', extent=[times[0], times[-1], freqs[0], freqs[-1]])
-    plt.colorbar(label='Magnitud')
-    plt.xlabel('Tiempo (s)')
-    plt.ylabel('Frecuencia (Hz)')
-    plt.title('Espectrograma')
-    plt.show()
-    return np.abs(espectrograma), freqs, times
 
 def graf_espectrograma_3d(x, fs, window_size, overlap, azim=45, elev=-45):
     '''
@@ -387,7 +364,7 @@ def graf_espectrograma_3d(x, fs, window_size, overlap, azim=45, elev=-45):
     plt.show()
     return np.abs(espectrograma), freqs, times
       
-def graf_espectrograma_pcolor(x, fs, window_size, overlap):
+def graf_espectrograma(x, fs, window_size, overlap):
     '''
     Grafica el espectrograma en vista superior utilizando pcolor.
 
