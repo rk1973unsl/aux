@@ -450,7 +450,7 @@ def canal_inalambrico(senal, fs, snr_dB, delay_spread):
        tercer argumento, relación señal a ruido en db
        cuarto argumento, dipersión de retardo
   '''
-  # Generar desvanecimiento multicamino
+  # Generar desvanecimiento multicamino.
   h = np.sqrt(0.5) * (np.random.randn() + 1j * np.random.randn()) * np.exp(-1j * 2 * np.pi * np.random.rand())
   
   # Ajustar retardo en función de la frecuencia de muestreo
