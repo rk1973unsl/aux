@@ -1,4 +1,4 @@
-# version 0.1.2 9/6/2023
+.1.3 16/6/2023
 print("importando modulos de ploteo, audio e interaccion")
    
 import numpy as np
