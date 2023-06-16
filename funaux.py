@@ -388,88 +388,87 @@ def graf_espectrograma(x, fs, window_size, overlap):
     return np.abs(espectrograma), freqs, times
 
 def generar_ofdm(bits, num_portadoras, cp_length):
-     '''
+   '''
        genera una señal ofdm
        primer argumento, bits a transmitir
        segundo argumento, numero de portadoras
        tercer argumento, longitud del prefijo cíclico
-    '''
-    # Parámetros de la señal OFDM
-    num_bits = len(bits)
-    num_subportadoras = num_portadoras - 1
-    total_simbolos = num_bits // num_subportadoras
-    
-    # Conversión de bits a símbolos
-    bits_por_simbolo = num_subportadoras
-    bits_padded = np.append(bits, np.zeros(num_subportadoras - (num_bits % num_subportadoras)))
-    simbolos = np.reshape(bits_padded, (total_simbolos, bits_por_simbolo))
-    
-    # Asignación de portadoras a los símbolos
-    portadoras = np.zeros((total_simbolos, num_portadoras), dtype=complex)
-    portadoras[:, 1:num_portadoras] = simbolos
-    
-    # Transformada de Fourier inversa (IFFT) para cada símbolo
-    simbolos_ifft = np.fft.ifft(portadoras, axis=1)
-    
-    # Cíclico prefijo (CP)
-    simbolos_cp = np.concatenate((simbolos_ifft[:, -cp_length:], simbolos_ifft), axis=1)
-    
-    # Concatenación de los símbolos con CP
-    s_ofdm = np.reshape(simbolos_cp, (-1,))
-    return s_ofdm
+   '''
+   # Parámetros de la señal OFDM
+   num_bits = len(bits)
+   num_subportadoras = num_portadoras - 1
+   total_simbolos = num_bits // num_subportadoras
+   
+   # Conversión de bits a símbolos
+   bits_por_simbolo = num_subportadoras
+   bits_padded = np.append(bits, np.zeros(num_subportadoras - (num_bits % num_subportadoras)))
+   simbolos = np.reshape(bits_padded, (total_simbolos, bits_por_simbolo))
+   
+   # Asignación de portadoras a los símbolos
+   portadoras = np.zeros((total_simbolos, num_portadoras), dtype=complex)
+   portadoras[:, 1:num_portadoras] = simbolos
+   
+   # Transformada de Fourier inversa (IFFT) para cada símbolo
+   simbolos_ifft = np.fft.ifft(portadoras, axis=1)
+   
+   # Cíclico prefijo (CP)
+   simbolos_cp = np.concatenate((simbolos_ifft[:, -cp_length:], simbolos_ifft), axis=1)
+   
+   # Concatenación de los símbolos con CP
+   s_ofdm = np.reshape(simbolos_cp, (-1,))
+   return s_ofdm
 
 def recibir_ofdm(s_ofdm, num_portadoras, cp_length):
-    '''
+   '''
        decodifica una señal ofdm
        primer argumento, señal ofdm
        segundo argumento, numero de portadoras
        tercer argumento, longitud del prefijo cíclico
-    '''
-    # Reorganización de la señal en bloques de símbolos con CP
-    simbolos_cp = np.reshape(s_ofdm, (-1, num_portadoras + cp_length))
-    
-    # Remoción del prefijo cíclico (CP)
-    simbolos = simbolos_cp[:, cp_length:]
-    
-    # Transformada de Fourier (FFT) para cada símbolo
-    simbolos_fft = np.fft.fft(simbolos, axis=1)
-    
-    # Eliminación de la portadora nula y las portadoras negativas
-    espectro = simbolos_fft[:, 1:(num_portadoras // 2)]
-    
-    # Conversión de los símbolos FFT a bits
-    bits = np.round(np.real(espectro)).flatten()
-    bits = bits.astype(int)
-    return bits
+   '''
+   # Reorganización de la señal en bloques de símbolos con CP
+   simbolos_cp = np.reshape(s_ofdm, (-1, num_portadoras + cp_length))
+   
+   # Remoción del prefijo cíclico (CP)
+   simbolos = simbolos_cp[:, cp_length:]
+   
+   # Transformada de Fourier (FFT) para cada símbolo
+   simbolos_fft = np.fft.fft(simbolos, axis=1)
+   
+   # Eliminación de la portadora nula y las portadoras negativas
+   espectro = simbolos_fft[:, 1:(num_portadoras // 2)]
+   
+   # Conversión de los símbolos FFT a bits
+   bits = np.round(np.real(espectro)).flatten()
+   bits = bits.astype(int)
+   return bits
 
 def canal_inalambrico(senal, fs, snr_dB, delay_spread):
-     '''
+   '''
        genera un desvanecimiento multicamino y agrega ruido a una señal
        primer argumento, señal a transmitir por el canal
        segundo argumento, frecuencia de muestreo
        tercer argumento, relación señal a ruido en db
        cuarto argumento, dipersión de retardo
-    '''
-    # Generar desvanecimiento multicamino
-    h = np.sqrt(0.5) * (np.random.randn() + 1j * np.random.randn()) * np.exp(-1j * 2 * np.pi * np.random.rand())
-    
-    # Ajustar retardo en función de la frecuencia de muestreo
-    delay_spread_samples = int(delay_spread * fs)
-    
-    # Aplicar desvanecimiento multicamino a la señal
-    senal_desvanecida = np.convolve(senal, h)
-    senal_desvanecida = senal_desvanecida[:len(senal)]  # Ajustar longitud de la señal desvanecida
-    
-    # Generar ruido gaussiano
-    snr = 10 ** (snr_dB / 10)  # Conversión de dB a escala lineal
-    var_ruido = np.var(senal_desvanecida) / snr
-    ruido = np.sqrt(var_ruido / 2) * (np.random.randn(len(senal_desvanecida)) + 1j * np.random.randn(len(senal_desvanecida)))
-    
-    # Agregar ruido a la señal desvanecida
-    senal_con_ruido = senal_desvanecida + ruido
-    
-    return senal_con_ruido
-
+  '''
+  # Generar desvanecimiento multicamino
+  h = np.sqrt(0.5) * (np.random.randn() + 1j * np.random.randn()) * np.exp(-1j * 2 * np.pi * np.random.rand())
   
+  # Ajustar retardo en función de la frecuencia de muestreo
+  delay_spread_samples = int(delay_spread * fs)
+  
+  # Aplicar desvanecimiento multicamino a la señal
+  senal_desvanecida = np.convolve(senal, h)
+  senal_desvanecida = senal_desvanecida[:len(senal)]  # Ajustar longitud de la señal desvanecida
+  
+  # Generar ruido gaussiano
+  snr = 10 ** (snr_dB / 10)  # Conversión de dB a escala lineal
+  var_ruido = np.var(senal_desvanecida) / snr
+  ruido = np.sqrt(var_ruido / 2) * (np.random.randn(len(senal_desvanecida)) + 1j * np.random.randn(len(senal_desvanecida)))
+  
+  # Agregar ruido a la señal desvanecida
+  senal_con_ruido = senal_desvanecida + ruido
+  
+  return senal_con_ruido
+ 
 print("listo!")
 
