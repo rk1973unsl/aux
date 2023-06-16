@@ -390,6 +390,12 @@ def graf_espectrograma(x, fs, window_size, overlap):
 
 
 def generar_ofdm(bits, num_portadoras, cp_length):
+     '''
+       genera una señal ofdm
+       primer argumento, bits a transmitir
+       segundo argumento, numero de portadoras
+       tercer argumento, longitud del prefijo cíclico
+    '''
     # Parámetros de la señal OFDM
     num_bits = len(bits)
     num_subportadoras = num_portadoras - 1
@@ -415,6 +421,12 @@ def generar_ofdm(bits, num_portadoras, cp_length):
     return s_ofdm
 
 def recibir_ofdm(s_ofdm, num_portadoras, cp_length):
+    '''
+       decodifica una señal ofdm
+       primer argumento, señal ofdm
+       segundo argumento, numero de portadoras
+       tercer argumento, longitud del prefijo cíclico
+    '''
     # Reorganización de la señal en bloques de símbolos con CP
     simbolos_cp = np.reshape(s_ofdm, (-1, num_portadoras + cp_length))
     
@@ -433,6 +445,13 @@ def recibir_ofdm(s_ofdm, num_portadoras, cp_length):
     return bits
 
 def canal_inalambrico(senal, fs, snr_dB, delay_spread):
+     '''
+       genera un desvanecimiento multicamino y agrega ruido a una señal
+       primer argumento, señal a transmitir por el canal
+       segundo argumento, frecuencia de muestreo
+       tercer argumento, relación señal a ruido en db
+       cuarto argumento, dipersión de retardo
+    '''
     # Generar desvanecimiento multicamino
     h = np.sqrt(0.5) * (np.random.randn() + 1j * np.random.randn()) * np.exp(-1j * 2 * np.pi * np.random.rand())
     
