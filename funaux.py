@@ -387,8 +387,6 @@ def graf_espectrograma(x, fs, window_size, overlap):
     plt.show()
     return np.abs(espectrograma), freqs, times
 
-
-
 def generar_ofdm(bits, num_portadoras, cp_length):
      '''
        genera una señal ofdm
