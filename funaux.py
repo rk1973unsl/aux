@@ -394,7 +394,8 @@ def generar_ofdm(bits, num_portadoras, cp_length):
   # Conversión de bits a símbolos
   bits_por_simbolo = num_subportadoras
   bits_padded = np.append(bits, np.zeros(num_subportadoras - (num_bits % num_subportadoras)))
-  simbolos = np.reshape(bits_padded, (total_simbolos, bits_por_simbolo))
+  simbolos = np.reshape(bits_padded, (total_simbolos, num_subportadoras))
+  #simbolos = np.reshape(bits_padded, (total_simbolos, bits_por_simbolo))
   # Asignación de portadoras a los símbolos
   portadoras = np.zeros((total_simbolos, num_portadoras), dtype=complex)
   portadoras[:, 1:num_portadoras] = simbolos
