@@ -414,7 +414,7 @@ def generar_ofdm(bits, num_portadoras, cp_length):
     s_ofdm = np.reshape(simbolos_cp, (-1,))
     return s_ofdm
 
-def obtener_espectro_ofdm(s_ofdm, num_portadoras, cp_length):
+def recibir_ofdm(s_ofdm, num_portadoras, cp_length):
     # Reorganización de la señal en bloques de símbolos con CP
     simbolos_cp = np.reshape(s_ofdm, (-1, num_portadoras + cp_length))
     
