@@ -471,4 +471,3 @@ def canal_inalambrico(senal, fs, snr_dB, delay_spread):
   return senal_con_ruido
  
 print("listo!")
-
