@@ -452,7 +452,7 @@ def canal_inalambrico(senal, fs, snr_dB, delay_spread):
   '''
   # Generar desvanecimiento multicamino.
   h = np.sqrt(0.5) * (np.random.randn() + 1j * np.random.randn()) * np.exp(-1j * 2 * np.pi * np.random.rand())
-  
+
   # Ajustar retardo en función de la frecuencia de muestreo
   delay_spread_samples = int(delay_spread * fs)
   
